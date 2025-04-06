@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SecurePasswordCrypt
 {
-    public static class MCryptoService
+    public static class CryptoService
     {
         // Configuration constants
         private const int KeySize = 32;               // 256 bits
@@ -50,7 +50,7 @@ namespace SecurePasswordCrypt
             byte[] tag = new byte[TagSize];
 
             // Perform AES-GCM encryption
-            using (var aesGcm = new AesGcm(key))
+            using (var aesGcm = new AesGcm(key, TagSize))
             {
                 aesGcm.Encrypt(nonce, plaintextBytes, cipherBytes, tag);
             }
@@ -92,7 +92,7 @@ namespace SecurePasswordCrypt
             byte[] plaintextBytes = new byte[cipherBytes.Length];
 
             // Perform AES-GCM decryption
-            using (var aesGcm = new AesGcm(key))
+            using (var aesGcm = new AesGcm(key, TagSize))
             {
                 aesGcm.Decrypt(nonce, cipherBytes, tag, plaintextBytes);
             }
