@@ -5,13 +5,14 @@ using System.Text;
 
 namespace SecurePasswordCrypt
 {
-    public static class MCryptoService
+    public static class CryptoService
     {
         // Configuration constants
         private const int KeySize = 32;               // 256 bits
         private const int SaltSize = 16;              // 128 bits
         private const int NonceSize = 12;             // 96 bits for AES-GCM
         private const int TagSize = 16;               // 128 bits
+        private const int TagSizeBits = 128;               // 128 bits
         private const int Iterations = 100_000;       // PBKDF2 iterations
 
         // Derive a key from a password and salt using PBKDF2
@@ -50,7 +51,7 @@ namespace SecurePasswordCrypt
             byte[] tag = new byte[TagSize];
 
             // Perform AES-GCM encryption
-            using (var aesGcm = new AesGcm(key))
+            using (var aesGcm = new AesGcm(key, TagSizeBits))
             {
                 aesGcm.Encrypt(nonce, plaintextBytes, cipherBytes, tag);
             }
@@ -92,7 +93,7 @@ namespace SecurePasswordCrypt
             byte[] plaintextBytes = new byte[cipherBytes.Length];
 
             // Perform AES-GCM decryption
-            using (var aesGcm = new AesGcm(key))
+            using (var aesGcm = new AesGcm(key, TagSizeBits))
             {
                 aesGcm.Decrypt(nonce, cipherBytes, tag, plaintextBytes);
             }
